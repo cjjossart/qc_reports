@@ -12,9 +12,9 @@ parser = argparse.ArgumentParser(description=__doc__)
 
 parser.add_argument('--stats', type=argparse.FileType('r'))
 parser.add_argument('--base_content_before_trim', type=argparse.FileType('r'))
-# parser.add_argument('--base_content_after_trim', type=argparse.FileType('r'))
-# parser.add_argument('--qaul_scores_before_trim', type=argparse.FileType('r'))
-# parser.add_argument('--qaul_scores_after_trim', type=argparse.FileType('r'))
+parser.add_argument('--base_content_after_trim', type=argparse.FileType('r'))
+parser.add_argument('--qual_scores_before_trim', type=argparse.FileType('r'))
+parser.add_argument('--qual_scores_after_trim', type=argparse.FileType('r'))
 # parser.add_argument('--path', type=argparse.FileType('r'))
 args = parser.parse_args()
 
@@ -51,22 +51,54 @@ print("coverage_numer: ", coverage_numer)
     #for line in f:
     #    print(line)
 
+# base_content_before_trim
 df = pd.read_csv(args.base_content_before_trim,
                  delim_whitespace=True, header=None, index_col=None)
-print(df)
+#print(df)
 df_subset = df[df[0] == "GC"]
 df_subset[3] = df[1] * df[2]
 
-print(df_subset)
+#print(df_subset)
 sum_reads = sum(df_subset[2])
 sum_reads_GC_content = sum(df_subset[3])
 GC_content = (sum_reads_GC_content) / (sum_reads)
 print("GC content", GC_content)
 
-#path = os.abspath(sys.argv[1])
-#print(path)
-    # process file...
-#print(sys.argv[1])
-#print(sys.argv[2])
-#print(sys.argv[3])
-#print(sys.argv[4])
+# base_content_after_trim
+df = pd.read_csv(args.base_content_after_trim,
+                 delim_whitespace=True, header=None, index_col=None)
+#print(df)
+df_subset = df[df[0] == "GC"]
+df_subset[3] = df[1] * df[2]
+
+#print(df_subset)
+sum_reads = sum(df_subset[2])
+sum_reads_GC_content = sum(df_subset[3])
+GC_content = (sum_reads_GC_content) / (sum_reads)
+print("GC content", GC_content)
+
+# qual_scores_before_trim
+f = pd.read_csv(args.qual_scores_before_trim,
+                delim_whitespace=True, index_col=None)
+
+f['x'] = f['Score']*f['readsNum']
+
+sum_reads_num = sum(f['readsNum'])
+print("sum of reads: ", sum_reads_num)
+
+phred_avg = sum(f['x'])/sum_reads_num
+#print("phred quality score: ", f)
+print("phred average: ", phred_avg)
+
+# qual_scores_after_trim
+f = pd.read_csv(args.qual_scores_after_trim,
+                delim_whitespace=True, index_col=None)
+
+f['x'] = f['Score']*f['readsNum']
+
+sum_reads_num = sum(f['readsNum'])
+print("AFTER sum of reads: ", sum_reads_num)
+
+phred_avg = sum(f['x'])/sum_reads_num
+#print("phred quality score: ", f)
+print("AFTER phred average: ", phred_avg)

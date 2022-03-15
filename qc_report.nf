@@ -19,23 +19,13 @@ process QC_REPORT {
     def args = task.ext.args ?: '' 
     def prefix = task.ext.prefix ?: "${meta.id}"
     
-    // def stats = txt.wihName(${meta.id}.stats.txt)
-    // def base_content_before_trim qa.${meta.id}.base_content.txt
-    // def base_content_after_trim ${meta.id}.base_content.txt
-    // def quaul_scores_before_trim ${meta.id}.for_qual_histogram.txt
-    // def qual_scores_after_trim qa.${meta.id}.for_qual_histogram.txt
-
     """
     python $projectDir/bin/qc_report_stats.py \\
         --stats ${meta.id}.stats.txt \\
-        --base_content_before_trim qa.${meta.id}.base_content.txt > output.txt
-
+        --base_content_before_trim qa.${meta.id}.base_content.txt \\
+        --base_content_after_trim ${meta.id}.base_content.txt \\
+        --qual_scores_before_trim ${meta.id}.for_qual_histogram.txt \\
+        --qual_scores_after_trim qa.${meta.id}.for_qual_histogram.txt > output.txt
      
     """
 }
-
-        //--base_content_before_trim qa.${meta.id}.base_content.txt \\
-        // --base_content_after_trim ${meta.id}.base_content.txt \\
-        // --qual_scores_before_trim ${meta.id}.for_qual_histogram.txt \\
-        // --qual_scores_after_trim qa.${meta.id}.for_qual_histogram.txt \\
-        // --path $txt > output.txt
