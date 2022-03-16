@@ -9,23 +9,27 @@ process QC_REPORT {
         
     input:
     tuple val(meta), path(txt)
-    //path reference
+    path reference
 
     output:
     tuple val(meta), path("output.txt"), emit: qc_stuff
 
     script:
-    //this may be redundant but 
     def args = task.ext.args ?: '' 
     def prefix = task.ext.prefix ?: "${meta.id}"
-    
+
     """
+    
     python $projectDir/bin/qc_report_stats.py \\
+        --sample ${meta.id} \\
         --stats ${meta.id}.stats.txt \\
         --base_content_before_trim qa.${meta.id}.base_content.txt \\
         --base_content_after_trim ${meta.id}.base_content.txt \\
         --qual_scores_before_trim ${meta.id}.for_qual_histogram.txt \\
-        --qual_scores_after_trim qa.${meta.id}.for_qual_histogram.txt > output.txt
-     
+        --qual_scores_after_trim qa.${meta.id}.for_qual_histogram.txt \\
+        --reference ${reference} > output.txt
+    
     """
+    // results need to be collected and put into the same csv spreadsheet
 }
+//#REFERENCE_LEN=\$(awk '!/^>/ {len+=length(\$0)} END {print len}' < ${reference}) 
